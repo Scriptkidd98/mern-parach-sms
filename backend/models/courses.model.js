@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const StudentCode = require('./studentcode.model')
 
 const courseSchema = new mongoose.Schema({
     courseName: {type: String, required: true},
@@ -13,7 +12,8 @@ const courseSchema = new mongoose.Schema({
     installmentDueDuration: {type: String, required: false},
     courseDescription: {type: String, required: true},
     courseDuration: {type: String, required: true},
-    cohorts: [{type: String, required: true}]
+    cohorts: [{type: String, required: true}],
+    tutor: {type: String, required: true}
 }, {
     timestamps: true
 })

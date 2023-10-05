@@ -15,7 +15,8 @@ const studentCodeSchema = new mongoose.Schema({
         dueDate: {type: String, required: true},
         installmentDueDurationForCourse: {type: String, required: true},
         balance: {type: Number, required: true},
-        cohort: {type: String, required: true}
+        cohort: {type: String, required: true},
+        completed: {type: Boolean, required: true}
     },
     date: {type: String, required: true}
 }, {

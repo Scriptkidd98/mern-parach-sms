@@ -105,12 +105,13 @@ const adminAuthenticatedApisFunction = (app) => {
     })
 
     app.post('/courses/create', (req, res) => {
-        const {courseName, courseCode, courseDescription, coursePrice, courseDuration, multipleCohortsMonthsArray} = req.body
+        const {courseName, courseCode, courseDescription, coursePrice, courseDuration, tutor, multipleCohortsMonthsArray} = req.body
         const newCourse = new Course({
             courseName,
             courseCode,
             coursePrice, 
             courseDuration,
+            tutor,
             students: [],
             courseDescription,
             cohorts: multipleCohortsMonthsArray
@@ -131,7 +132,7 @@ const adminUnauthenticatedApisFunction = (app) => {
             const isLoginValid = await bcrypt.compare(password, admin.password)
             if (isLoginValid) {
                 const token = jwt.sign({id: admin._id, role: 'admin'}, `${process.env.TOKEN_SECRET}`)
-                res.json({token, userId: admin._id, role: 'admin'})
+                res.json({token, userId: admin._id, role: 'admin', adminData: admin})
             } else {
                 return res.json('Email or password incorrect')
             }

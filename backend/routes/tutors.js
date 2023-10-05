@@ -2,11 +2,20 @@ const TutorCode = require('../models/tutorcode.model')
 const Tutor = require('../models/tutor.model')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+let Student = require('../models/students.model')
 require('dotenv').config()
 
 const tutorAuthenticatedApiFunction = (app) => {
     app.post('/admins')
     app.get('/tutors')
+    app.get('/course/students/:id', async (req, res) => {
+        const students = await Student.find({'courses.courseCode': req.params.id})
+        if(students) {
+            res.status(200).json({students: students})
+        } else {
+            res.status(400).json('No student(s) take that course')
+        }
+    })
 }
 
 const tutorUnauthenticatedApiFunction = (app) => {
@@ -40,7 +49,7 @@ const tutorUnauthenticatedApiFunction = (app) => {
             const isLoginValid = await bcrypt.compare(password, tutor.password)
             if (isLoginValid) {
                 const token = jwt.sign({id: tutor._id, role: 'tutor'}, `${process.env.TOKEN_SECRET}`)
-                res.status(200).json({token, userId: tutor._id, role: 'tutor'})
+                res.status(200).json({token, userId: tutor._id, role: 'tutor', tutorData: tutor})
             } else {
                 return res.status(401).json('Email or password incorrect')
             }

@@ -25,29 +25,34 @@ const studentAuthenticatedApisFunction = (app) => {
     })
 
     app.post('/course/apply/:id', async (req, res) => {
-        const { startDate, courseName, courseCode, courseDescription, courseDuration } = req.body
-        const courseObject = {
-            startDate, 
-            courseName, 
-            courseCode, 
-            courseDescription,
-            courseDuration,
-            coursePrice,
-            amountPaid,
-            paymentStatus,
-            dueDate,
-            balance,
-            installmentDueDurationForCourse
+        try {
+            const { courseInfoObject, courseId, studentInfo } = req.body;
+    
+            // Find the student by ID and update it
+            const student = await Student.findByIdAndUpdate(req.params.id, {
+                $push: { courses: courseInfoObject },
+            });
+    
+            if (!student) {
+                return res.status(404).json('Student not found');
+            }
+    
+            const course = await Course.findByIdAndUpdate(courseId, {
+                $push: { students: studentInfo },
+            });
+    
+            if (!course) {
+                return res.status(404).json('Course not found');
+            }
+            
+    
+            return res.json('Course added successfully');
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json('Internal server error');
         }
-        Student.findByIdAndUpdate(req.params.id)
-        .then(student => {
-            student.course.push(courseObject)
-            student.save()
-            .then(() => res.json('Course added successfully'))
-            .catch(error => res.status(401).json("Error:" + error))
-        })
-        .catch(error => res.status(401).json("Error:" + error))
-    })
+    });
+    
 }
 
 const studentUnauthenticatedApisFunction = (app) => {
